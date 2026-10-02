@@ -25,12 +25,23 @@ shell-looking text; the CLI never evaluates or executes them. Quote names in
 your shell to pass spaces or shell metacharacters literally. For example,
 `--name ' Ada '` prints exactly `Hello,  Ada !` followed by one LF.
 
+To print usage, supply only `--help`:
+
+```sh
+node src/hello.mjs --help
+```
+
+It prints exactly `Usage: node src/hello.mjs [--name NAME]` followed by one
+LF to stdout, writes nothing to stderr, and exits with code 0.
+
 Every other argument shape writes nothing to stdout, writes exactly
 `Usage: node src/hello.mjs [--name NAME]` followed by one LF to stderr, and
 exits with code 2. This includes missing or blank names, names beginning with
 a raw hyphen, unknown options, positional names, extra arguments, duplicate
-`--name` options (even after an empty value), `--name=Ada`, `-n`, `--help`,
-and `--`. Invalid input is never echoed in the diagnostic.
+`--name` options (even after an empty value), `--name=Ada`, `-n`, and `--`.
+Help with extra arguments or combined options is invalid, including
+`--help --help`, `--help extra`, `--help --name Ada`, `--name Ada --help`,
+and `--name --help`. Invalid input is never echoed in the diagnostic.
 
 Run the syntax check and child-process test without installing dependencies:
 
@@ -40,5 +51,6 @@ npm test
 ```
 
 The tests check literal stdout, stderr, and exit codes through real CLI child
-processes for no arguments, accepted names, and invalid invocations.
+processes for no arguments, accepted names, sole help, and invalid invocations,
+including combined or extra help arguments.
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the complete local gate and hook setup.
