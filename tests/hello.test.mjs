@@ -15,6 +15,16 @@ test('CLI greets the world with no arguments and exits successfully', () => {
   );
 });
 
+test('CLI prints the fixed usage for sole help and exits successfully', () => {
+  const result = spawnSync(process.execPath, [cliPath, '--help'], { encoding: 'utf8' });
+
+  assert.ifError(result.error);
+  assert.deepEqual(
+    { stdout: result.stdout, stderr: result.stderr, exitCode: result.status },
+    { stdout: 'Usage: node src/hello.mjs [--name NAME]\n', stderr: '', exitCode: 0 },
+  );
+});
+
 const namedCases = [
   ['simple name', ['--name', 'Ada'], 'Hello, Ada!\n'],
   ['name with spaces', ['--name', 'Ada Lovelace'], 'Hello, Ada Lovelace!\n'],
@@ -48,7 +58,11 @@ const invalidCases = [
   ['duplicate name option after an empty value', ['--name', '', '--name', 'Ada']],
   ['equals syntax', ['--name=Ada']],
   ['short option', ['-n', 'Ada']],
-  ['help option', ['--help']],
+  ['duplicate help option', ['--help', '--help']],
+  ['help with an extra argument', ['--help', 'extra']],
+  ['help before a name option', ['--help', '--name', 'Ada']],
+  ['help after a named greeting', ['--name', 'Ada', '--help']],
+  ['help as an option-looking name', ['--name', '--help']],
   ['option terminator', ['--']],
 ];
 
